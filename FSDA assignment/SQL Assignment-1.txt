@@ -1,0 +1,177 @@
+-- iNeuron SQL Projet
+-- Task-1
+create table shopping_history (
+    product varchar not null,
+    quantity int not null,
+    unit_price int not null
+);
+
+insert into shopping_history(product,quantity,unit_price) values('bread',1,20);
+insert into shopping_history(product,quantity,unit_price) values('bread',2,20);
+insert into shopping_history(product,quantity,unit_price) values('milk',2,26);
+insert into shopping_history(product,quantity,unit_price) values('bread',5,15);
+insert into shopping_history(product,quantity,unit_price) values('milk',1,26);
+insert into shopping_history(product,quantity,unit_price) values('milk',3,24);
+insert into shopping_history(product,quantity,unit_price) values('milk',1,26);
+insert into shopping_history(product,quantity,unit_price) values('bread',3,18);
+insert into shopping_history(product,quantity,unit_price) values('bread',1,30);
+insert into shopping_history(product,quantity,unit_price) values('milk',4,25);
+
+select * from shopping_history;
+
+select product, sum(quantity*unit_price) as total_price
+from shopping_history
+group by 1
+order by 1 desc;
+
+
+-- Task 2.1
+create or replace table phones (
+    name varchar(20) not null unique,
+    phone_number int not null unique
+);
+
+create or replace table calls (
+    id int not null,
+    caller int not null,
+    callee int not null,
+    duration int not null,
+    unique(id)
+);
+
+insert into phones values('Jack',1234),
+('Lena',3333),
+('Mark',9999),
+('Anna',7582);
+
+select * from phones;
+
+insert into calls values(25,1234,7582,8),
+(7,9999,7582,1),
+(18,9999,3333,4),
+(2,7582,3333,3),
+(3,3333,1234,1),
+(21,3333,1234,1);
+
+select * from calls;
+
+select p.name
+from phones p, calls c
+where p.phone_number=c.caller or p.phone_number=c.callee
+group by 1
+having sum(c.duration)>=10
+order by 1;
+
+-- Task-2.2
+create or replace table phones1 (
+    name varchar(20) not null unique,
+    phone_number int not null unique
+);
+
+create or replace table calls1 (
+    id int not null,
+    caller int not null,
+    callee int not null,
+    duration int not null,
+    unique(id)
+);
+
+insert into phones1 values('John',6356),
+('Addison',4315),
+('Kate',8003),
+('Ginny',9831);
+
+insert into calls1 values(65,8003,9831,7),
+(100,9831,8003,3),
+(145,4315,9831,18);
+
+select p.name
+from phones1 p, calls1 c
+where p.phone_number=c.caller or p.phone_number=c.callee
+group by 1
+having sum(c.duration)>=10
+order by 1;
+
+-- Task-3.1
+create or replace table transactions (
+amount int not null,
+date date not null);
+
+insert into transactions values(1000,'2020-01-06'),
+(-10,'2020-01-14'),
+(-75,'2020-01-20'),
+(-5,'2020-01-25'),
+(-4,'2020-01-29'),
+(2000,'2020-03-10'),
+(-75,'2020-03-12'),
+(-20,'2020-03-15'),
+(40,'2020-03-15'),
+(200,'2020-10-10'),
+(-200,'2020-10-10'),
+(-50,'2020-03-17');
+
+select * from transactions;
+
+select a.sum_amount - 5*(12-b.fee_excempted) balance from  
+(select sum(amount) as sum_amount, 'a' name from  transactions) a  left join  
+(select count(*) fee_excempted, 'a' name from
+(select month(date)
+from transactions
+where amount <0 
+group by month(date) 
+having (count(amount) >=3 and sum(amount) <=-100))) as b 
+on a.name = b.name;
+
+-- Task- 3.2
+create or replace table transactions1 (
+amount int not null,
+date date not null);
+
+insert into transactions1 values(1,'2020-06-29'),
+(35,'2020-02-20'),
+(-50,'2020-02-03'),
+(-1,'2020-02-26'),
+(-200,'2020-08-01'),
+(-44,'2020-02-07'),
+(-5,'2020-02-25'),
+(1,'2020-06-29'),
+(1,'2020-06-29'),
+(-100,'2020-12-29'),
+(-100,'2020-12-30'),
+(-100,'2020-12-31');
+
+select * from transactions1;
+
+select a.sum_amount - 5*(12-b.fee_excempted) balance from  
+(select sum(amount) as sum_amount, 'a' name from  transactions1) a  left join  
+(select count(*) fee_excempted, 'a' name from
+(select month(date)
+from transactions1
+where amount <0 
+group by month(date) 
+having (count(amount) >=3 and sum(amount) <=-100))) as b 
+on a.name = b.name;
+
+-- Task- 3.3
+create or replace table transactions2 (
+amount int not null,
+date date not null);
+
+insert into transactions2 values(6000,'2020-04-03'),
+(5000,'2020-04-02'),
+(4000,'2020-04-01'),
+(3000,'2020-03-01'),
+(2000,'2020-02-01'),
+(1000,'2020-01-01');
+
+select * from transactions2;
+
+select a.sum_amount - 5*(12-b.fee_excempted) balance from  
+(select sum(amount) as sum_amount, 'a' name from  transactions2) a  left join  
+(select count(*) fee_excempted, 'a' name from
+(select month(date)
+from transactions2
+where amount <0 
+group by month(date) 
+having (count(amount) >=3 and sum(amount) <=-100))) as b 
+on a.name = b.name;
